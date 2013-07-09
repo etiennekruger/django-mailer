@@ -55,25 +55,35 @@ def send_html_mail(subject, message, message_html, from_email, recipient_list, r
     """
     from django.utils.encoding import force_unicode
     from django.core.mail import EmailMultiAlternatives
-    from mailer.models import make_message
+    from mailer.models import make_message, Message
     
     priority = PRIORITY_MAPPING[priority]
-    
+
+    db_msg = Message(priority="0")
+    db_msg.save()
+
     # need to do this in case subject used lazy version of ugettext
     subject = force_unicode(subject)
     message = force_unicode(message)
-    
+
+    # substitute in the message id for tracking
+    message = message.format(id=db_msg.id)
+    message_html = message_html.format(id=db_msg.id)
+
     msg = make_message(subject=subject,
                        body=message,
                        from_email=from_email,
                        to=recipient_list,
                        bcc=recipient_bcc_list,
                        priority=priority)
+
+
     email = msg.email
     email = EmailMultiAlternatives(email.subject, email.body, email.from_email, email.to, email.bcc)
     email.attach_alternative(message_html, "text/html")
-    msg.email = email
-    msg.save()
+    db_msg.email = email
+    db_msg.priority = priority
+    db_msg.save()
     return 1
 
 

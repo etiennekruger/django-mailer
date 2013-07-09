@@ -14,10 +14,13 @@ from django.db import models
 
 
 PRIORITIES = (
+    ("0", "on hold"),
     ("1", "high"),
     ("2", "medium"),
     ("3", "low"),
     ("4", "deferred"),
+    ("5", "sent"),
+    ("6", "viewed"),
 )
 
 
@@ -57,6 +60,13 @@ class MessageManager(models.Manager):
         """
     
         return self.filter(priority="4")
+    
+    def sent(self):
+        """
+        the messages in the queue that have been sent
+        """
+    
+        return self.filter(priority__gt="4")
     
     def retry_deferred(self, new_priority=2):
         count = 0
@@ -108,6 +118,22 @@ class Message(models.Model):
             return True
         else:
             return False
+    
+    def view(self):
+        if self.priority == "5":
+            self.priority = "6"
+            self.save()
+            return True
+        else:
+            return False
+    
+    def clean_body(self):
+        body = self.email.body
+        return body.replace('?mid=', '?omid=').replace('&mid=', '&omid=')
+    
+    def clean_html(self):
+        html = self.email.alternatives[0][0]
+        return html.replace('?mid=', '?omid=').replace('&mid=', '&omid=')
     
     def _get_email(self):
         return db_to_email(self.message_data)

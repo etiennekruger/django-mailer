@@ -4,7 +4,7 @@ from django.conf import settings
 import views
 
 urlpatterns = patterns('',
-    (r'^t$', views.bug),
-    (r'^i$', views.iframe),
-    (r'^c$', views.click),
+    (r'^t$', views.bug, {}, 'bug'),
+    (r'^i$', views.iframe, {}, 'iframe'),
+    (r'^c$', views.click, {}, 'click'),
 )
