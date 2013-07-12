@@ -21,6 +21,7 @@ PRIORITIES = (
     ("4", "deferred"),
     ("5", "sent"),
     ("6", "viewed"),
+    ("7", "deleted"),
 )
 
 
@@ -97,6 +98,14 @@ def db_to_email(data):
 
 
 class Message(models.Model):
+    PRIORITY_DEFAULT = '2'
+    PRIORITY_ON_HOLD = '0'
+    PRIORITY_HIGH = '1'
+    PRIORITY_MEDIUM = '2'
+    PRIORITY_LOW = '3'
+    PRIORITY_DEFERRED = '4'
+    PRIORITY_DELETED = '7'
+    
     
     # The actual data - a pickled EmailMessage
     message_data = models.TextField()
@@ -132,8 +141,11 @@ class Message(models.Model):
         return body.replace('?mid=', '?omid=').replace('&mid=', '&omid=')
     
     def clean_html(self):
-        html = self.email.alternatives[0][0]
-        return html.replace('?mid=', '?omid=').replace('&mid=', '&omid=')
+        try:
+            html = self.email.alternatives[0][0]
+            return html.replace('?mid=', '?omid=').replace('&mid=', '&omid=')
+        except AttributeError:
+            return 'None'
     
     def _get_email(self):
         return db_to_email(self.message_data)
