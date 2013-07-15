@@ -21,7 +21,7 @@ PRIORITIES = (
     ("4", "deferred"),
     ("5", "sent"),
     ("6", "viewed"),
-    ("7", "deleted"),
+    ("7", "cancelled"),
 )
 
 
@@ -104,7 +104,7 @@ class Message(models.Model):
     PRIORITY_MEDIUM = '2'
     PRIORITY_LOW = '3'
     PRIORITY_DEFERRED = '4'
-    PRIORITY_DELETED = '7'
+    PRIORITY_CANCELLED = '7'
     
     
     # The actual data - a pickled EmailMessage
