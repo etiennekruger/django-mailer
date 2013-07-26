@@ -104,6 +104,8 @@ class Message(models.Model):
     PRIORITY_MEDIUM = '2'
     PRIORITY_LOW = '3'
     PRIORITY_DEFERRED = '4'
+    PRIORITY_SENT = '5'
+    PRIORITY_VIEWED = '6'
     PRIORITY_CANCELLED = '7'
     
     

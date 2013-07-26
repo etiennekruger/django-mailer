@@ -84,7 +84,7 @@ def send_html_mail(subject, message, message_html, from_email, recipient_list, r
     db_msg.email = email
     db_msg.priority = priority
     db_msg.save()
-    return 1
+    return db_msg
 
 
 def send_mass_mail(datatuple, fail_silently=False, auth_user=None,
